@@ -1,6 +1,6 @@
 <template>
   <v-card color="white">
-    <v-app-bar absolute>
+    <v-app-bar>
       <v-btn text>
         <v-icon>mdi-magnify</v-icon>
       </v-btn>

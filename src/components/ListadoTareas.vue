@@ -1,27 +1,40 @@
 <template>
   <v-card>
     <v-data-table
-      v-model="seleccionados"
       :headers="columnas"
       :items="filas"
-      :single-select="singleSelect"
       item-key="name"
-      show-select
       class="elevation-1"
     >
       <template v-slot:top>
+        <v-tooltip color="red" right v-if="seleccionados.length > 0">
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+              @click="eliminar"
+              fab
+              class="red accent-2 mx-3 mt-2"
+              dark
+              top
+              right
+              v-bind="attrs"
+              v-on="on"
+            >
+              <v-icon>mdi-delete</v-icon>
+            </v-btn>
+          </template>
+          <span>Eliminar tareas seleccionadas</span>
+        </v-tooltip>
         <v-card-text>
           <strong>Pasos inmediatos</strong>
           <br />
           Aqui van los pasos que completaste
-          <CrearTarea @registro="listar" />
+          <CrearTarea @registro="agregar($event)" />
+          <br />
         </v-card-text>
         <v-divider />
-        <v-switch
-          v-model="singleSelect"
-          label="Selección simple"
-          class="mx-2 my-1"
-        />
+      </template>
+      <template v-slot:item.seleccion="{ item }">
+        <v-checkbox v-model="seleccionados" :value="item" />
       </template>
     </v-data-table>
     {{ seleccionados }}
@@ -36,9 +49,9 @@ export default Vue.extend({
   name: "ListadoTareas",
   components: { CrearTarea },
   data: () => ({
-    singleSelect: false,
     seleccionados: [],
     columnas: [
+      { text: "", value: "seleccion", sortable: false },
       { text: "Titulo", value: "titulo" },
       { text: "Descripción", value: "descripcion" },
       { text: "Tags", value: "tags" },
@@ -47,6 +60,9 @@ export default Vue.extend({
     filas: [{}],
   }),
   methods: {
+    async agregar(datos: any): Promise<void> {
+      this.filas.push(datos);
+    },
     async listar(): Promise<void> {
       this.filas = [];
       this.filas.push({
@@ -64,6 +80,12 @@ export default Vue.extend({
         descripcion: "Descripción 3",
         tags: ["Tag 1", "Tag 2", "Tag 3"],
       });
+    },
+    eliminar(): void {
+      this.seleccionados.forEach((seleccionado) => {
+        this.filas = this.filas.filter((fila) => fila !== seleccionado);
+      });
+      this.seleccionados = [];
     },
   },
   created() {

@@ -11,7 +11,7 @@
     <v-card class="py-2">
       <v-card-text>
         <h1 class="text-center">Agregar tarea</h1>
-        <v-form>
+        <v-form @submit.prevent="registrar">
           <v-text-field v-model="titulo" label="Titulo" counter />
           <v-textarea v-model="descripcion" label="Descripción" counter />
           <v-select
@@ -55,7 +55,12 @@ export default Vue.extend({
       return true;
     },
     registrar(): void {
-      this.$emit("registro");
+      const datos: any = {
+        titulo: this.titulo,
+        descripcion: this.descripcion,
+        tags: this.tagsSeleccionados,
+      };
+      this.$emit("registro", datos);
     },
   },
 });

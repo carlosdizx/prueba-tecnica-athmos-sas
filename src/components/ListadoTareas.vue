@@ -1,47 +1,47 @@
 <template>
-  <v-card>
-    <v-data-table
-      :headers="columnas"
-      :items="filas"
-      item-key="name"
-      class="elevation-1"
-    >
-      <template v-slot:top>
-        <v-tooltip color="red" right v-if="seleccionados.length > 0">
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn
-              @click="eliminar"
-              fab
-              class="red accent-2 mx-3 mt-2"
-              dark
-              top
-              right
-              v-bind="attrs"
-              v-on="on"
-            >
-              <v-icon>mdi-delete</v-icon>
-            </v-btn>
-          </template>
-          <span>Eliminar tareas seleccionadas</span>
-        </v-tooltip>
-        <v-card-text>
-          <strong>Pasos inmediatos</strong>
-          <br />
-          Aqui van los pasos que completaste
-          <CrearEditarTarea @registro="agregar($event)" />
-          <br />
-        </v-card-text>
-        <v-divider />
-      </template>
-      <template v-slot:item.seleccion="{ item }">
-        <v-checkbox v-model="seleccionados" :value="item" />
-      </template>
-      <template v-slot:item.acciones="{ item }">
-        <CrearEditarTarea editar :datos="item" @edicion="editar($event)" />
-      </template>
-    </v-data-table>
-    {{ seleccionados }}
-  </v-card>
+  <v-data-table
+    :headers="columnas"
+    :items="filas"
+    item-key="name"
+    class="elevation-1"
+  >
+    <template v-slot:top>
+      <v-tooltip color="red" right v-if="seleccionados.length > 0">
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn
+            @click="eliminar(null)"
+            fab
+            class="red accent-2 mx-3 mt-2"
+            dark
+            top
+            right
+            v-bind="attrs"
+            v-on="on"
+          >
+            <v-icon>mdi-delete</v-icon>
+          </v-btn>
+        </template>
+        <span>Eliminar tareas seleccionadas</span>
+      </v-tooltip>
+      <v-card-text>
+        <strong>Pasos inmediatos</strong>
+        <br />
+        Aqui van los pasos que completaste
+        <CrearEditarTarea @registro="agregar($event)" />
+        <br />
+      </v-card-text>
+      <v-divider />
+    </template>
+    <template v-slot:item.seleccion="{ item }">
+      <v-checkbox v-model="seleccionados" :value="item" />
+    </template>
+    <template v-slot:item.acciones="{ item }">
+      <CrearEditarTarea editar :datos="item" @edicion="editar($event)" />
+      <v-btn fab outlined small color="red" @click="eliminar(item)">
+        <v-icon>mdi-delete</v-icon>
+      </v-btn>
+    </template>
+  </v-data-table>
 </template>
 
 <script lang="ts">
@@ -49,7 +49,7 @@ import CrearEditarTarea from "@/components/CrearEditarTarea.vue";
 import Vue from "vue";
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const shortid = require("shortid");
-import { mapActions, mapState } from "vuex";
+import { mapActions } from "vuex";
 
 export default Vue.extend({
   name: "ListadoTareas",
@@ -61,7 +61,7 @@ export default Vue.extend({
       { text: "Titulo", value: "titulo" },
       { text: "Descripción", value: "descripcion" },
       { text: "Tags", value: "tags" },
-      { text: "Acciones", value: "acciones" },
+      { text: "Acciones", value: "acciones", sortable: false },
     ],
     filas: [{}],
   }),
@@ -72,10 +72,16 @@ export default Vue.extend({
       this.filas.push(tarea);
       await this.cambiarTareas(this.filas);
     },
-    async eliminar(): Promise<void> {
-      this.seleccionados.forEach((seleccionado) => {
-        this.filas = this.filas.filter((tarea: any) => tarea !== seleccionado);
-      });
+    async eliminar(tareaDel: any): Promise<void> {
+      if (tareaDel) {
+        this.filas = this.filas.filter((tarea: any) => tarea !== tareaDel);
+      } else {
+        this.seleccionados.forEach((seleccionado) => {
+          this.filas = this.filas.filter(
+            (tarea: any) => tarea !== seleccionado
+          );
+        });
+      }
       this.seleccionados = [];
       await this.cambiarTareas(this.filas);
     },

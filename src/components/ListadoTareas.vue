@@ -49,6 +49,7 @@ import CrearEditarTarea from "@/components/CrearEditarTarea.vue";
 import Vue from "vue";
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const shortid = require("shortid");
+import { mapActions, mapState } from "vuex";
 
 export default Vue.extend({
   name: "ListadoTareas",
@@ -56,7 +57,7 @@ export default Vue.extend({
   data: () => ({
     seleccionados: [],
     columnas: [
-      { text: "", value: "seleccion", sortable: false },
+      { text: "Selecciona", value: "seleccion", sortable: false },
       { text: "Titulo", value: "titulo" },
       { text: "Descripción", value: "descripcion" },
       { text: "Tags", value: "tags" },
@@ -65,34 +66,36 @@ export default Vue.extend({
     filas: [{}],
   }),
   methods: {
+    ...mapActions(["cambiarTareas", "cargarTareas"]),
     async agregar(tarea: any): Promise<void> {
       tarea.id = shortid.generate();
       this.filas.push(tarea);
+      await this.cambiarTareas(this.filas);
     },
-    async listar(): Promise<void> {
-      this.filas = [];
-    },
-    eliminar(): void {
+    async eliminar(): Promise<void> {
       this.seleccionados.forEach((seleccionado) => {
-        this.filas = this.filas.filter((fila) => fila !== seleccionado);
+        this.filas = this.filas.filter((tarea: any) => tarea !== seleccionado);
       });
       this.seleccionados = [];
-      this.listar();
+      await this.cambiarTareas(this.filas);
     },
-    editar(tarea: any): void {
+    async editar(tarea: any): Promise<void> {
       this.filas.map((fila: any) => {
         if (fila.id === tarea.id) {
-          console.log("xd");
           fila.titulo = tarea.titulo;
           fila.descripcion = tarea.descripcion;
           fila.tags = tarea.tags;
           return;
         }
       });
+      await this.cambiarTareas(this.filas);
     },
   },
-  created() {
-    this.listar();
+  async created() {
+    this.filas = [];
+    this.filas = JSON.parse(
+      JSON.parse(JSON.stringify(await this.cargarTareas()))
+    );
   },
 });
 </script>

@@ -29,23 +29,66 @@
     <v-card class="py-2">
       <v-card-text>
         <h1 class="text-center">Agregar tarea</h1>
-        <v-form @submit.prevent="envio">
-          <v-text-field v-model="titulo" label="Titulo" counter />
-          <v-textarea v-model="descripcion" label="Descripción" counter />
-          <v-select
-            v-model="tagsSeleccionados"
-            label="Tags"
-            multiple
-            :items="tags"
-            counter
-          />
-          <v-btn v-if="!editar" block class="success" type="submit">
-            Registrar
-          </v-btn>
-          <v-btn v-if="editar" block class="primary" type="submit">
-            Actualizar
-          </v-btn>
-        </v-form>
+        <ValidationObserver ref="observer" v-slot="{ invalid }">
+          <v-form @submit.prevent="envio">
+            <validation-provider
+              v-slot="{ errors }"
+              name="Titulo"
+              rules="required|min:2|max:20"
+            >
+              <v-text-field
+                v-model="titulo"
+                label="Titulo"
+                counter
+                :error-messages="errors"
+              />
+            </validation-provider>
+            <validation-provider
+              v-slot="{ errors }"
+              name="Titulo"
+              rules="max:30"
+            >
+              <v-textarea
+                v-model="descripcion"
+                label="Descripción"
+                counter
+                :error-messages="errors"
+              />
+            </validation-provider>
+            <validation-provider
+              v-slot="{ errors }"
+              name="Etiquetas"
+              rules="required"
+            >
+              <v-select
+                v-model="tagsSeleccionados"
+                label="Etiquetas"
+                multiple
+                :items="tags"
+                counter
+                :error-messages="errors"
+              />
+            </validation-provider>
+            <v-btn
+              :disabled="invalid"
+              v-if="!editar"
+              block
+              class="success"
+              type="submit"
+            >
+              Registrar
+            </v-btn>
+            <v-btn
+              :disabled="invalid"
+              v-if="editar"
+              block
+              class="primary"
+              type="submit"
+            >
+              Actualizar
+            </v-btn>
+          </v-form>
+        </ValidationObserver>
       </v-card-text>
     </v-card>
   </v-dialog>
@@ -78,9 +121,6 @@ export default Vue.extend({
     datos: Object,
   },
   methods: {
-    comprobarCampos(): boolean {
-      return true;
-    },
     envio(): void {
       const datos: any = {
         titulo: this.titulo,
@@ -92,6 +132,7 @@ export default Vue.extend({
         datos.id = this.datos.id;
         this.$emit("edicion", datos);
       }
+      this.dialog = !this.dialog;
     },
   },
   created() {

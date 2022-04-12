@@ -28,7 +28,7 @@
           <strong>Pasos inmediatos</strong>
           <br />
           Aqui van los pasos que completaste
-          <CrearTarea @registro="agregar($event)" />
+          <CrearEditarTarea @registro="agregar($event)" />
           <br />
         </v-card-text>
         <v-divider />
@@ -36,18 +36,23 @@
       <template v-slot:item.seleccion="{ item }">
         <v-checkbox v-model="seleccionados" :value="item" />
       </template>
+      <template v-slot:item.acciones="{ item }">
+        <CrearEditarTarea editar :datos="item" @edicion="editar($event)" />
+      </template>
     </v-data-table>
     {{ seleccionados }}
   </v-card>
 </template>
 
 <script lang="ts">
-import CrearTarea from "@/components/CrearTarea.vue";
+import CrearEditarTarea from "@/components/CrearEditarTarea.vue";
 import Vue from "vue";
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const shortid = require("shortid");
 
 export default Vue.extend({
   name: "ListadoTareas",
-  components: { CrearTarea },
+  components: { CrearEditarTarea },
   data: () => ({
     seleccionados: [],
     columnas: [
@@ -60,32 +65,30 @@ export default Vue.extend({
     filas: [{}],
   }),
   methods: {
-    async agregar(datos: any): Promise<void> {
-      this.filas.push(datos);
+    async agregar(tarea: any): Promise<void> {
+      tarea.id = shortid.generate();
+      this.filas.push(tarea);
     },
     async listar(): Promise<void> {
       this.filas = [];
-      this.filas.push({
-        titulo: "Titulo 1",
-        descripcion: "Descripcion 1",
-        tags: ["Tag 1", "Tag 2", "Tag 3"],
-      });
-      this.filas.push({
-        titulo: "Titulo 2",
-        descripcion: "Descripcion 2",
-        tags: ["Tag 1", "Tag 2", "Tag 3"],
-      });
-      this.filas.push({
-        titulo: "Titulo 3",
-        descripcion: "Descripción 3",
-        tags: ["Tag 1", "Tag 2", "Tag 3"],
-      });
     },
     eliminar(): void {
       this.seleccionados.forEach((seleccionado) => {
         this.filas = this.filas.filter((fila) => fila !== seleccionado);
       });
       this.seleccionados = [];
+      this.listar();
+    },
+    editar(tarea: any): void {
+      this.filas.map((fila: any) => {
+        if (fila.id === tarea.id) {
+          console.log("xd");
+          fila.titulo = tarea.titulo;
+          fila.descripcion = tarea.descripcion;
+          fila.tags = tarea.tags;
+          return;
+        }
+      });
     },
   },
   created() {

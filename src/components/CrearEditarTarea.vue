@@ -96,6 +96,7 @@
 
 <script lang="ts">
 import Vue from "vue";
+import Swal from "sweetalert2";
 
 export default Vue.extend({
   name: "CrearTarea",
@@ -127,10 +128,23 @@ export default Vue.extend({
         descripcion: this.descripcion,
         tags: this.tagsSeleccionados,
       };
-      if (!this.editar) this.$emit("registro", datos);
-      else {
+      if (!this.editar) {
+        this.$emit("registro", datos);
+        Swal.fire({
+          title: "Registro existoso!",
+          timer: 1500,
+          showConfirmButton: false,
+          icon: "success",
+        });
+      } else {
         datos.id = this.datos.id;
         this.$emit("edicion", datos);
+        Swal.fire({
+          title: "Actualización existosa!",
+          timer: 1500,
+          showConfirmButton: false,
+          icon: "success",
+        });
       }
       this.dialog = !this.dialog;
     },

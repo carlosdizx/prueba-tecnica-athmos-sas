@@ -122,7 +122,12 @@ export default Vue.extend({
     datos: Object,
   },
   methods: {
-    envio(): void {
+    async limpiarDatos(): Promise<void> {
+      this.titulo = "";
+      this.descripcion = "";
+      this.tagsSeleccionados = [];
+    },
+    async envio(): Promise<void> {
       const datos: any = {
         titulo: this.titulo,
         descripcion: this.descripcion,
@@ -130,16 +135,21 @@ export default Vue.extend({
       };
       if (!this.editar) {
         this.$emit("registro", datos);
-        Swal.fire({
+        await Swal.fire({
           title: "Registro existoso!",
           timer: 1500,
           showConfirmButton: false,
           icon: "success",
         });
+        await this.limpiarDatos();
+        const observer: any = this.$refs.observer;
+        if (observer) {
+          observer.reset();
+        }
       } else {
         datos.id = this.datos.id;
         this.$emit("edicion", datos);
-        Swal.fire({
+        await Swal.fire({
           title: "Actualización existosa!",
           timer: 1500,
           showConfirmButton: false,
@@ -149,7 +159,7 @@ export default Vue.extend({
       this.dialog = !this.dialog;
     },
   },
-  created() {
+  async created() {
     if (this.editar && this.datos) {
       this.titulo = this.datos.titulo;
       this.descripcion = this.datos.descripcion;

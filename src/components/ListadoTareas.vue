@@ -47,6 +47,8 @@
 <script lang="ts">
 import CrearEditarTarea from "@/components/CrearEditarTarea.vue";
 import Vue from "vue";
+import Swal from "sweetalert2";
+
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const shortid = require("shortid");
 import { mapActions } from "vuex";
@@ -73,17 +75,36 @@ export default Vue.extend({
       await this.cambiarTareas(this.filas);
     },
     async eliminar(tareaDel: any): Promise<void> {
-      if (tareaDel) {
-        this.filas = this.filas.filter((tarea: any) => tarea !== tareaDel);
-      } else {
-        this.seleccionados.forEach((seleccionado) => {
-          this.filas = this.filas.filter(
-            (tarea: any) => tarea !== seleccionado
-          );
-        });
-      }
-      this.seleccionados = [];
-      await this.cambiarTareas(this.filas);
+      Swal.fire({
+        title: `¿Quieres eliminar ${
+          tareaDel ? "la tarea" : "las tareas seleccionadas"
+        }?`,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#ff0505",
+        cancelButtonColor: "#747474",
+        confirmButtonText: "Si, eliminar!",
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          await Swal.fire({
+            title: "Eliminación exitosa",
+            timer: 1500,
+            showConfirmButton: false,
+            icon: "success",
+          });
+          if (tareaDel) {
+            this.filas = this.filas.filter((tarea: any) => tarea !== tareaDel);
+          } else {
+            this.seleccionados.forEach((seleccionado) => {
+              this.filas = this.filas.filter(
+                (tarea: any) => tarea !== seleccionado
+              );
+            });
+          }
+          this.seleccionados = [];
+        }
+        await this.cambiarTareas(this.filas);
+      });
     },
     async editar(tarea: any): Promise<void> {
       this.filas.map((fila: any) => {

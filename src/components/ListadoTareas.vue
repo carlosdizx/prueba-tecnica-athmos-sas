@@ -28,8 +28,7 @@
           <v-btn
             @click="marcarTerminadas"
             fab
-            class="green accent-3 mx-3 mt-2"
-            dark
+            class="teal accent-3 mx-3 mt-2"
             top
             right
             v-bind="attrs"
@@ -48,7 +47,12 @@
           <v-col cols="8"></v-col>
           <v-col cols="4">
             % Tareas completadas
-            <v-progress-linear class="float-center" color="green" height="25">
+            <v-progress-linear
+              rounded
+              class="float-center"
+              color="teal accent-3"
+              height="25"
+            >
               <strong>{{ porcentaje }}%</strong>
             </v-progress-linear>
           </v-col>

@@ -6,7 +6,7 @@
     <template v-slot:activator="{ on, attrs }">
       <v-btn
         v-if="!editar"
-        class="float-right success"
+        class="float-right teal accent-3"
         text
         v-bind="attrs"
         v-on="on"

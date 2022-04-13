@@ -2,8 +2,10 @@
   <v-data-table
     :headers="columnas"
     :items="filas"
-    item-key="name"
+    :search="buscado"
+    :custom-filter="filtrarPorLlave"
     class="elevation-1"
+    fixed-header
   >
     <template v-slot:top>
       <v-tooltip color="red" right v-if="seleccionados.length > 0">
@@ -64,6 +66,11 @@
         <br />
       </v-card-text>
       <v-divider />
+      <v-text-field
+        class="mx-5"
+        v-model="buscado"
+        label="Buscar una tarea (ingrese titulo o descripción)"
+      />
     </template>
     <template v-slot:item.seleccion="{ item }">
       <v-checkbox v-model="seleccionados" :value="item" />
@@ -101,6 +108,7 @@ export default Vue.extend({
     seleccionados: [],
     total: 0,
     porcentaje: 0,
+    buscado: "",
     columnas: [
       { text: "Selecciona", value: "seleccion", sortable: false },
       { text: "Titulo", value: "titulo", sortable: false },
@@ -196,6 +204,19 @@ export default Vue.extend({
       } else {
         this.porcentaje = 0;
       }
+    },
+    filtrarPorLlave(valor: any, buscado: any): boolean {
+      if (typeof valor === "string" && typeof buscado === "string") {
+        if (buscado.trim().length !== 0) {
+          return (
+            valor
+              .toString()
+              .toLocaleUpperCase()
+              .indexOf(buscado.toUpperCase()) !== -1
+          );
+        }
+      }
+      return false;
     },
   },
   async created() {

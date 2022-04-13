@@ -44,7 +44,19 @@
         <strong>Pasos inmediatos</strong>
         <br />
         Aqui van los pasos que completaste
+        <v-row>
+          <v-col cols="8"></v-col>
+          <v-col cols="4">
+            % Tareas completadas
+            <v-progress-linear class="float-center" color="green" height="25">
+              <strong>{{ porcentaje }}%</strong>
+            </v-progress-linear>
+          </v-col>
+        </v-row>
+        <br />
         <CrearEditarTarea @registro="agregar($event)" />
+        <br />
+        <br />
         <br />
       </v-card-text>
       <v-divider />
@@ -83,12 +95,14 @@ export default Vue.extend({
   components: { CrearEditarTarea },
   data: () => ({
     seleccionados: [],
+    total: 0,
+    porcentaje: 0,
     columnas: [
       { text: "Selecciona", value: "seleccion", sortable: false },
-      { text: "Titulo", value: "titulo" },
-      { text: "Descripción", value: "descripcion" },
-      { text: "Tags", value: "tags" },
-      { text: "Estado", value: "estado" },
+      { text: "Titulo", value: "titulo", sortable: false },
+      { text: "Descripción", value: "descripcion", sortable: false },
+      { text: "Tags", value: "tags", sortable: false },
+      { text: "Estado", value: "estado", sortable: false },
       { text: "Acciones", value: "acciones", sortable: false },
     ],
     filas: [{}],
@@ -99,6 +113,7 @@ export default Vue.extend({
       tarea.id = shortid.generate();
       this.filas.push(tarea);
       await this.cambiarTareas(this.filas);
+      await this.calcularPorcentaje();
     },
     async eliminar(tareaDel: any): Promise<void> {
       Swal.fire({
@@ -129,6 +144,7 @@ export default Vue.extend({
           }
           this.seleccionados = [];
         }
+        await this.calcularPorcentaje();
         await this.cambiarTareas(this.filas);
       });
     },
@@ -143,6 +159,7 @@ export default Vue.extend({
         }
       });
       await this.cambiarTareas(this.filas);
+      await this.calcularPorcentaje();
     },
     async marcarTerminadas(): Promise<void> {
       this.seleccionados.forEach((seleccionado: any) => {
@@ -153,6 +170,7 @@ export default Vue.extend({
         });
       });
       await this.cambiarTareas(this.filas);
+      await this.calcularPorcentaje();
       this.seleccionados = [];
       await Swal.fire({
         title: "Marcadas como tareas completadas",
@@ -161,12 +179,30 @@ export default Vue.extend({
         icon: "success",
       });
     },
+    async calcularPorcentaje(): Promise<void> {
+      const completadas = [];
+      this.total = this.filas.length;
+      this.filas.forEach((fila: any) => {
+        if (fila.estado) {
+          completadas.push(fila);
+        }
+      });
+      if (completadas.length > 0) {
+        this.porcentaje = Math.round((completadas.length / this.total) * 100);
+      } else {
+        this.porcentaje = 0;
+      }
+    },
   },
   async created() {
     this.filas = [];
-    this.filas = JSON.parse(
+    const filas = JSON.parse(
       JSON.parse(JSON.stringify(await this.cargarTareas()))
     );
+    if (filas) {
+      this.filas = filas;
+      await this.calcularPorcentaje();
+    }
   },
 });
 </script>

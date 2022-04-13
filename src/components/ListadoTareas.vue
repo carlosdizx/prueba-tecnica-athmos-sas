@@ -82,12 +82,12 @@
       </v-btn>
     </template>
     <template v-slot:item.estado="{ item }">
-      <v-chip v-if="item.estado" class="ma-2" color="green" text-color="white">
-        Completada
-      </v-chip>
-      <v-chip v-if="!item.estado" class="ma-2" color="red" text-color="white">
-        Sin terminar
-      </v-chip>
+      <v-btn v-if="item.estado" fab small color="teal" dark>
+        <v-icon>mdi-check</v-icon>
+      </v-btn>
+      <v-btn v-if="!item.estado" fab small color="red" dark outlined>
+        <v-icon>mdi-close</v-icon>
+      </v-btn>
     </template>
   </v-data-table>
 </template>
@@ -110,12 +110,12 @@ export default Vue.extend({
     porcentaje: 0,
     buscado: "",
     columnas: [
-      { text: "Selecciona", value: "seleccion", sortable: false },
+      { text: "Estado", value: "estado", sortable: false },
       { text: "Titulo", value: "titulo", sortable: false },
       { text: "Descripción", value: "descripcion", sortable: false },
       { text: "Tags", value: "tags", sortable: false },
-      { text: "Estado", value: "estado", sortable: false },
       { text: "Acciones", value: "acciones", sortable: false },
+      { text: "Selecciona", value: "seleccion", sortable: false },
     ],
     filas: [{}],
   }),

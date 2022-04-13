@@ -89,9 +89,6 @@
         Sin terminar
       </v-chip>
     </template>
-    <template v-slot:item.tags="{ item }">
-      {{ convertirEnString(item.tags) }}
-    </template>
   </v-data-table>
 </template>
 
@@ -220,17 +217,6 @@ export default Vue.extend({
         }
       }
       return false;
-    },
-    convertirEnString(tags: any[]): string {
-      let str = "";
-      tags.forEach((tag) => {
-        if (str === "") {
-          str = tag;
-        } else {
-          str = str + "," + tag;
-        }
-      });
-      return str;
     },
   },
   async created() {

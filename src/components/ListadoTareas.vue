@@ -41,6 +41,14 @@
         <v-icon>mdi-delete</v-icon>
       </v-btn>
     </template>
+    <template v-slot:item.estado="{ item }">
+      <v-chip v-if="item.estado" class="ma-2" color="green" text-color="white">
+        Completada
+      </v-chip>
+      <v-chip v-if="!item.estado" class="ma-2" color="red" text-color="white">
+        Sin terminar
+      </v-chip>
+    </template>
   </v-data-table>
 </template>
 
@@ -63,6 +71,7 @@ export default Vue.extend({
       { text: "Titulo", value: "titulo" },
       { text: "Descripción", value: "descripcion" },
       { text: "Tags", value: "tags" },
+      { text: "Estado", value: "estado" },
       { text: "Acciones", value: "acciones", sortable: false },
     ],
     filas: [{}],
@@ -112,6 +121,7 @@ export default Vue.extend({
           fila.titulo = tarea.titulo;
           fila.descripcion = tarea.descripcion;
           fila.tags = tarea.tags;
+          fila.estado = tarea.estado;
           return;
         }
       });

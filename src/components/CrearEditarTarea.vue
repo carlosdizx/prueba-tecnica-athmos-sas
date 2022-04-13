@@ -69,6 +69,11 @@
                 :error-messages="errors"
               />
             </validation-provider>
+            <v-switch
+              v-model="estado"
+              inset
+              :label="estado ? 'Completada' : 'Sin terminar'"
+            />
             <v-btn
               :disabled="invalid"
               v-if="!editar"
@@ -112,10 +117,10 @@ export default Vue.extend({
       "Tag 7",
       "Tag 8",
     ],
-    //------- models -------
     titulo: "",
     descripcion: "",
     tagsSeleccionados: [],
+    estado: false,
   }),
   props: {
     editar: Boolean,
@@ -132,6 +137,7 @@ export default Vue.extend({
         titulo: this.titulo,
         descripcion: this.descripcion,
         tags: this.tagsSeleccionados,
+        estado: this.estado,
       };
       if (!this.editar) {
         this.$emit("registro", datos);
@@ -164,6 +170,7 @@ export default Vue.extend({
       this.titulo = this.datos.titulo;
       this.descripcion = this.datos.descripcion;
       this.tagsSeleccionados = this.datos.tags;
+      this.estado = this.datos.estado;
     }
   },
 });

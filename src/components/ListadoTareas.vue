@@ -23,6 +23,23 @@
         </template>
         <span>Eliminar tareas seleccionadas</span>
       </v-tooltip>
+      <v-tooltip color="green" right v-if="seleccionados.length > 0">
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn
+            @click="marcarTerminadas"
+            fab
+            class="green accent-3 mx-3 mt-2"
+            dark
+            top
+            right
+            v-bind="attrs"
+            v-on="on"
+          >
+            <v-icon>mdi-check</v-icon>
+          </v-btn>
+        </template>
+        <span>Marcar como terminadas</span> <v-icon>mdi-check</v-icon>
+      </v-tooltip>
       <v-card-text>
         <strong>Pasos inmediatos</strong>
         <br />
@@ -126,6 +143,23 @@ export default Vue.extend({
         }
       });
       await this.cambiarTareas(this.filas);
+    },
+    async marcarTerminadas(): Promise<void> {
+      this.seleccionados.forEach((seleccionado: any) => {
+        this.filas.map((fila: any) => {
+          if (seleccionado.id === fila.id) {
+            fila.estado = true;
+          }
+        });
+      });
+      await this.cambiarTareas(this.filas);
+      this.seleccionados = [];
+      await Swal.fire({
+        title: "Marcadas como tareas completadas",
+        timer: 1500,
+        showConfirmButton: false,
+        icon: "success",
+      });
     },
   },
   async created() {

@@ -1,95 +1,125 @@
 <template>
-  <v-data-table
-    :headers="columnas"
-    :items="filas"
-    :search="buscado"
-    :custom-filter="filtrarPorLlave"
-    class="elevation-1"
-    fixed-header
-  >
-    <template v-slot:top>
-      <v-tooltip color="red" right v-if="seleccionados.length > 0">
-        <template v-slot:activator="{ on, attrs }">
-          <v-btn
-            @click="eliminar(null)"
-            fab
-            class="red accent-2 mx-3 mt-2"
-            dark
-            top
-            right
-            v-bind="attrs"
-            v-on="on"
-          >
-            <v-icon>mdi-delete</v-icon>
-          </v-btn>
-        </template>
-        <span>Eliminar tareas seleccionadas</span>
-      </v-tooltip>
-      <v-tooltip color="green" right v-if="seleccionados.length > 0">
-        <template v-slot:activator="{ on, attrs }">
-          <v-btn
-            @click="marcarTerminadas"
-            fab
-            class="teal accent-3 mx-3 mt-2"
-            top
-            right
-            v-bind="attrs"
-            v-on="on"
-          >
-            <v-icon>mdi-check</v-icon>
-          </v-btn>
-        </template>
-        <span>Marcar como terminadas</span> <v-icon>mdi-check</v-icon>
-      </v-tooltip>
-      <v-card-text>
-        <strong>Pasos inmediatos</strong>
-        <br />
-        Aqui van los pasos que completaste
-        <v-row>
-          <v-col cols="8"></v-col>
-          <v-col cols="4">
-            % Tareas completadas
-            <v-progress-linear
-              rounded
-              class="float-center"
-              color="teal accent-3"
-              height="25"
+  <v-card>
+    <v-data-table
+      :headers="columnas"
+      :items="filas"
+      :search="buscado"
+      :custom-filter="filtrarPorLlave"
+      class="elevation-1"
+      sort-by="estado"
+      fixed-header
+    >
+      <template v-slot:top>
+        <v-tooltip color="red" right v-if="seleccionados.length > 0">
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+              @click="eliminar(null)"
+              fab
+              class="red accent-2 mx-3 mt-2"
+              dark
+              top
+              right
+              v-bind="attrs"
+              v-on="on"
             >
-              <strong>{{ porcentaje }}%</strong>
-            </v-progress-linear>
-          </v-col>
-        </v-row>
-        <br />
-        <CrearEditarTarea @registro="agregar($event)" />
-        <br />
-        <br />
-        <br />
-      </v-card-text>
-      <v-divider />
-      <v-text-field
-        class="mx-5"
-        v-model="buscado"
-        label="Buscar una tarea (ingrese titulo o descripción)"
-      />
-    </template>
-    <template v-slot:item.seleccion="{ item }">
-      <v-checkbox v-model="seleccionados" :value="item" />
-    </template>
-    <template v-slot:item.acciones="{ item }">
-      <CrearEditarTarea editar :datos="item" @edicion="editar($event)" />
-      <v-btn fab outlined small color="red" @click="eliminar(item)">
-        <v-icon>mdi-delete</v-icon>
-      </v-btn>
-    </template>
-    <template v-slot:item.estado="{ item }">
-      <v-btn v-if="item.estado" fab small color="teal" dark>
-        <v-icon>mdi-check</v-icon>
-      </v-btn>
-      <v-btn v-if="!item.estado" fab small color="red" dark outlined>
-        <v-icon>mdi-close</v-icon>
-      </v-btn>
-    </template>
-  </v-data-table>
+              <v-icon>mdi-delete</v-icon>
+            </v-btn>
+          </template>
+          <span>Eliminar tareas seleccionadas</span>
+        </v-tooltip>
+        <v-tooltip color="green" right v-if="seleccionados.length > 0">
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+              @click="marcarTerminadas"
+              fab
+              class="teal accent-3 mx-3 mt-2"
+              top
+              right
+              v-bind="attrs"
+              v-on="on"
+            >
+              <v-icon>mdi-check</v-icon>
+            </v-btn>
+          </template>
+          <span>Marcar como terminadas</span> <v-icon>mdi-check</v-icon>
+        </v-tooltip>
+        <v-card-text>
+          <strong>Pasos inmediatos</strong>
+          <br />
+          Aqui van los pasos que completaste
+          <v-row>
+            <v-col cols="8"></v-col>
+            <v-col cols="4">
+              % Tareas completadas
+              <v-progress-linear
+                rounded
+                class="float-center"
+                color="teal accent-3"
+                height="25"
+              >
+                <strong>{{ porcentaje }}%</strong>
+              </v-progress-linear>
+            </v-col>
+          </v-row>
+          <br />
+          <CrearEditarTarea @registro="agregar($event)" />
+          <br />
+          <br />
+          <br />
+        </v-card-text>
+        <v-divider />
+        <v-text-field
+          class="mx-5"
+          v-model="buscado"
+          label="Buscar una tarea (ingrese titulo o descripción)"
+        />
+      </template>
+      <template v-slot:item.seleccion="{ item }">
+        <v-checkbox v-model="seleccionados" :value="item" />
+      </template>
+      <template v-slot:item.acciones="{ item }">
+        <CrearEditarTarea editar :datos="item" @edicion="editar($event)" />
+        <v-btn fab outlined small color="red" @click="eliminar(item)">
+          <v-icon>mdi-delete</v-icon>
+        </v-btn>
+      </template>
+      <template v-slot:item.estado="{ item }">
+        <v-tooltip color="grey" right v-if="item.estado">
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+              fab
+              small
+              color="grey"
+              outlined
+              dark
+              v-bind="attrs"
+              v-on="on"
+            >
+              <v-icon>mdi-check</v-icon>
+            </v-btn>
+          </template>
+          <span>Completada</span>
+        </v-tooltip>
+        <v-tooltip color="teal" right v-if="!item.estado">
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+              fab
+              small
+              color="teal"
+              outlined
+              dark
+              v-bind="attrs"
+              v-on="on"
+            >
+              <v-icon>mdi-check</v-icon>
+            </v-btn>
+          </template>
+          <span>Sin terminar</span>
+        </v-tooltip>
+      </template>
+    </v-data-table>
+    {{ filas }}
+  </v-card>
 </template>
 
 <script lang="ts">
@@ -110,7 +140,7 @@ export default Vue.extend({
     porcentaje: 0,
     buscado: "",
     columnas: [
-      { text: "Estado", value: "estado", sortable: false },
+      { text: "Estado", value: "estado", sortable: true },
       { text: "Titulo", value: "titulo", sortable: false },
       { text: "Descripción", value: "descripcion", sortable: false },
       { text: "Tags", value: "tags", sortable: false },

@@ -34,6 +34,7 @@
         />
         <v-btn type="submit" color="primary" block> Iniciar sesión </v-btn>
       </v-form>
+      <h5>Sí recargas la página debes volver a iniciar sesión!</h5>
     </v-card-text>
   </v-card>
 </template>
@@ -41,6 +42,7 @@
 <script lang="ts">
 import Vue from "vue";
 import Swal from "sweetalert2";
+import { mapActions } from "vuex";
 
 export default Vue.extend({
   name: "AuthLogin",
@@ -50,12 +52,18 @@ export default Vue.extend({
     showPass: false,
   }),
   methods: {
+    ...mapActions(["cambiarUsuario"]),
     mostrarPassword() {
       this.showPass = !this.showPass;
     },
     async comprobarCredenciales(): Promise<void> {
       console.log(this.usuario, this.password);
       if (this.usuario === "admin" && this.password === "879poiosXg*") {
+        const data = {
+          usuario: this.usuario,
+          password: this.password,
+        };
+        await this.cambiarUsuario(data);
         await this.$router.push("/home");
       } else {
         await Swal.fire(

@@ -4,8 +4,9 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "build": "vue-cli-service build --prod",
+    "deploy": "netlify deploy --prod"
   },
   "dependencies": {
     "@babel/polyfill": "^7.4.4",
@@ -18,7 +19,8 @@
     "vue-router": "^3.5.1",
     "vuetify": "^2.6.4",
     "vuex": "^3.6.2",
-    "sweetalert2": "^11.4.4"
+    "sweetalert2": "^11.4.4",
+    "netlify-cli": "^9.13.0"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^5.4.0",

@@ -5,9 +5,11 @@
         <v-icon>mdi-magnify</v-icon>
       </v-btn>
       <v-spacer></v-spacer>
-      <v-btn text>
+      <v-alert dense>
         <v-icon>mdi-account</v-icon>
-      </v-btn>
+        Pedro Pablo Doe <br />
+        <small>admin</small>
+      </v-alert>
       <template v-slot:extension>
         <v-tabs align-with-title color="teal accent-3">
           <v-tab
